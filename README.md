@@ -1,0 +1,1 @@
+docker run --name pg3 -e POSTGRES_PASSWORD=1234 -d -p 5434:5432 postgres

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: game-container
-        image: kroune/super-financer-backend:master
+        image: kroune/super-financer-backend:v1.0.0
         imagePullPolicy: "Always"
         volumeMounts:
           - name: config-volume

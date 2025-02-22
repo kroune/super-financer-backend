@@ -1,22 +1,22 @@
 {
-    "deploymentConfig": {
-        "port": 8080
-    },
-    "ratelimitConfig": {
-        "capacity": 100,
-        "rate": "PT1S"
-    },
-    "databaseConfig": {
-        "url": "jdbc:postgresql://localhost:5434/postgres",
-        "user": "postgres",
-        "password": "1234",
-        "driver": "org.postgresql.Driver"
-    },
-    "jwtConfig": {
-        "secret": "secret1",
-        "audience": "audience1",
-        "issuer": "issuer1",
-        "expiresAt": "PT0S"
-    },
-    "apiVersion": 1
+  "deploymentConfig": {
+    "port": 8080
+  },
+  "ratelimitConfig": {
+    "capacity": 100,
+    "rate": "PT1S"
+  },
+  "databaseConfig": {
+    "url": "jdbc:postgresql://localhost:5434/postgres",
+    "user": "postgres",
+    "password": "1234",
+    "driver": "org.postgresql.Driver"
+  },
+  "jwtConfig": {
+    "secret": "secret1",
+    "audience": "audience1",
+    "issuer": "issuer1",
+    "expiresAt": "PT0S"
+  },
+  "apiVersion": 1
 }

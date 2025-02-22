@@ -9,16 +9,17 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToStream
 import model.UserLoginBody
 import model.UserRegistrationBody
 import org.koin.ktor.ext.inject
-import scheme.InsertPostBodySchema
-import scheme.PostsService
 
+@OptIn(ExperimentalSerializationApi::class)
 fun Application.configureRouting() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
@@ -76,29 +77,19 @@ fun Application.configureRouting() {
                         val userId = principal?.payload?.getClaim("userId")?.asLong()
                         val offset = call.queryParameters["offset"]?.toLongOrNull()
                         if (offset == null || offset < 0) {
-                            apiResponse(Status.Error(badRequest, "Invalid offset"), null)
+                            call.respond(HttpStatusCode.BadRequest.description("Invalid offset"))
                             return@get
                         }
                         val limit = call.queryParameters["limit"]?.toIntOrNull()
                         if (limit == null || limit !in 1..100) {
-                            apiResponse(Status.Error(badRequest, "Invalid limit"), null)
+                            call.respond(HttpStatusCode.BadRequest.description("Invalid limit"))
                             return@get
                         }
-                        val postsService by inject<PostsService>()
-                        val posts = postsService.readLatest(offset - 1, limit, userId).map {
-                            PostsFeedItem(
-                                it.id,
-                                it.isLiked,
-                                it.title,
-                                it.text,
-                                it.tags,
-                                it.images,
-                                it.userId,
-                                it.attachedNewsArticle
-                            )
+                        val postsController by inject<PostsController>()
+                        val posts = postsController.readLatestPosts(offset, limit, userId)
+                        call.respondOutputStream {
+                            Json.encodeToStream(posts, this)
                         }
-                        val response = Json.encodeToString(posts)
-                        call.respondText(response)
                         return@get
                     }
                 }
@@ -194,5 +185,15 @@ data class PostsFeedItem(
     val tags: List<String>,
     val images: List<ByteArray>,
     val userId: Long,
+    val attachedNewsArticle: String?
+)
+
+
+@Serializable
+data class InsertPostBodySchema(
+    val title: String,
+    val text: String,
+    val tags: List<String>,
+    val images: List<ByteArray>,
     val attachedNewsArticle: String?
 )

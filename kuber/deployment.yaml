@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-financer
+spec:
+  selector:
+    matchLabels:
+      server: super-financer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        server: super-financer
+    spec:
+      containers:
+      - name: game-container
+        image: kroune/super-financer-backend:master
+        imagePullPolicy: "Always"
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/super-financer/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: super-financer-config.json

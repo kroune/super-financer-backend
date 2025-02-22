@@ -1,13 +1,13 @@
 package scheme
 
-import kotlinx.coroutines.Dispatchers
+import dbQuery
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@Suppress("RemoveRedundantQualifierName")
 class LikesService : KoinComponent {
     val database by inject<Database>()
 
@@ -45,6 +45,7 @@ class LikesService : KoinComponent {
             }
         }
     }
+
     suspend fun readLikes(userId: Long): List<Long> = dbQuery {
         Likes.selectAll().where {
             Likes.userId eq userId
@@ -52,7 +53,4 @@ class LikesService : KoinComponent {
             it[Likes.id]
         }
     }
-
-    private suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
 }

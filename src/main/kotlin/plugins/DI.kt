@@ -1,6 +1,5 @@
 package plugins
 
-import Config
 import controller.CompressController
 import controller.LikeController
 import controller.PostsController
@@ -8,6 +7,7 @@ import controller.UserController
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
+import scheme.ImagesService
 import scheme.LikesService
 import scheme.PostsService
 import scheme.UserService
@@ -22,6 +22,7 @@ fun Application.configureDI() {
             single { CompressController() }
             single { LikesService() }
             single { LikeController() }
+            single { ImagesService() }
         })
     }
 }
